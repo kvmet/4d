@@ -1,0 +1,14 @@
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const images = document.querySelectorAll('img[src^="https://user-images.githubusercontent.com"]');
+        images.forEach(img => {
+            const originalSrc = img.src;
+            const newImg = new Image();
+            newImg.crossOrigin = "anonymous";
+            newImg.onload = function() {
+                img.src = newImg.src;
+            };
+            newImg.src = originalSrc;
+        });
+    });
+</script>
