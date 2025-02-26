@@ -60,7 +60,7 @@ jobs:
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
 
           # Commit and push changes if any
-          git add wiki-content
+          git add wiki
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
