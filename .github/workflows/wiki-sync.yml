@@ -8,37 +8,44 @@ jobs:
   sync-wiki:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # This is important to allow pushing
+      contents: write
 
     steps:
       - name: Checkout main repo
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}  # Add this line
+          token: ${{ secrets.GITHUB_TOKEN }}
         
       - name: Checkout wiki
         uses: actions/checkout@v3
         with:
           repository: ${{github.repository}}.wiki
           path: temp-wiki
-          token: ${{ secrets.GITHUB_TOKEN }}  # Add this line
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Sync wiki content
         run: |
-          # Create wiki content directory if it doesn't exist
-          mkdir -p wiki-content
+          mkdir -p wiki
 
-          # Copy and process markdown files
           for file in temp-wiki/*.md; do
             if [ -f "$file" ]; then
               filename=$(basename "$file")
               if [[ "$filename" != "_"* ]]; then
-                title=$(head -n 1 "$file" | sed 's/^#\s*//' || basename "$file" .md)
+                content=$(cat "$file")
                 
-                if ! grep -q "^---" "$file"; then
-                  echo -e "---\ntitle: ${title}\nlayout: default\n---\n\n$(cat $file)" > "wiki/$(basename $file)"
-                else
+                # Check if file starts with frontmatter
+                if [[ $(head -n 1 "$file") == "---" ]]; then
+                  # Has frontmatter, copy as-is
                   cp "$file" "wiki/$(basename $file)"
+                else
+                  # Look for first H1 heading
+                  if h1_title=$(echo "$content" | grep -m 1 "^# "); then
+                    title=$(echo "$h1_title" | sed 's/^# //')
+                    echo -e "---\ntitle: ${title}\nlayout: default\n---\n\n$content" > "wiki/$(basename $file)"
+                  else
+                    # No H1, just copy the file as-is
+                    cp "$file" "wiki/$(basename $file)"
+                  fi
                 fi
               fi
             fi
