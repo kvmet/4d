@@ -1,0 +1,56 @@
+name: Wiki Sync to Pages
+
+on:
+  gollum:
+  workflow_dispatch:
+
+jobs:
+  sync-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main repo
+        uses: actions/checkout@v3
+        
+      - name: Checkout wiki
+        uses: actions/checkout@v3
+        with:
+          repository: ${{github.repository}}.wiki
+          path: temp-wiki
+
+      - name: Sync wiki content
+        run: |
+          # Create wiki content directory if it doesn't exist
+          mkdir -p wiki-content
+
+          # Copy and process markdown files
+          for file in temp-wiki/*.md; do
+            if [ -f "$file" ]; then
+              filename=$(basename "$file")
+              # Skip special files like _Sidebar.md and _Footer.md
+              if [[ "$filename" != "_"* ]]; then
+                # Extract title from first heading or filename
+                title=$(head -n 1 "$file" | sed 's/^#\s*//' || basename "$file" .md)
+                
+                # Add frontmatter if it doesn't exist
+                if ! grep -q "^---" "$file"; then
+                  echo -e "---\ntitle: ${title}\nlayout: wiki-page\n---\n\n$(cat $file)" > "wiki-content/$(basename $file)"
+                else
+                  cp "$file" "wiki-content/$(basename $file)"
+                fi
+              fi
+            fi
+          done
+
+          # Clean up
+          rm -rf temp-wiki
+
+          # Commit changes if any
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          git add wiki-content
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Sync wiki content"
+            git push
+          fi
