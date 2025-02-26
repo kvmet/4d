@@ -36,9 +36,9 @@ jobs:
                 title=$(head -n 1 "$file" | sed 's/^#\s*//' || basename "$file" .md)
                 
                 if ! grep -q "^---" "$file"; then
-                  echo -e "---\ntitle: ${title}\nlayout: wiki-page\n---\n\n$(cat $file)" > "wiki-content/$(basename $file)"
+                  echo -e "---\ntitle: ${title}\nlayout: default\n---\n\n$(cat $file)" > "wiki/$(basename $file)"
                 else
-                  cp "$file" "wiki-content/$(basename $file)"
+                  cp "$file" "wiki/$(basename $file)"
                 fi
               fi
             fi
