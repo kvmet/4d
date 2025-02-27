@@ -1,7 +1,7 @@
 title: 4d.gg 
 description: 4d
-baseurl: "https://4d.gg"
 url: "https://4d.gg"
+baseurl: ""
 
 # Build settings
 markdown: kramdown
