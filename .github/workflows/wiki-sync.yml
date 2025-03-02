@@ -46,10 +46,15 @@ jobs:
                   if [[ $line =~ \<img.*src=\"(https://github\.com/[^\"]+)\".*\> ]]; then
                     img_url="${BASH_REMATCH[1]}"
                     img_filename=$(echo "$img_url" | md5sum | cut -d' ' -f1).png  # Generate unique filename
-                    
-                    # Download the image
+
+                    # Download the image with verbose output and proper redirect handling
                     echo "Downloading image from $img_url"
-                    curl -L -o "wiki/images/$img_filename" "$img_url"
+                    curl -v -L --max-redirs 5 -o "wiki/images/$img_filename" "$img_url"
+
+                    # Add file info for debugging
+                    echo "Downloaded file info:"
+                    ls -l "wiki/images/$img_filename"
+                    file "wiki/images/$img_filename"
                     
                     # Replace the entire <img> tag with markdown image syntax
                     if [[ $line =~ alt=\"([^\"]+)\" ]]; then
