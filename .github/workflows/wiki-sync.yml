@@ -49,7 +49,10 @@ jobs:
 
                     # Download the image with verbose output and proper redirect handling
                     echo "Downloading image from $img_url"
-                    curl -v -L --max-redirs 5 -o "wiki/images/$img_filename" "$img_url"
+                    curl -L \
+                        -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" \
+                        -H "Accept: image/webp,image/apng,image/*,*/*;q=0.8" \
+                        -o "wiki/images/$img_filename" "$img_url"
 
                     # Add file info for debugging
                     echo "Downloaded file info:"
