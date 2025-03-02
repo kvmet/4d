@@ -1,7 +1,7 @@
 Welcome to the 4d wiki!
 
-[[nikole]]
+[nikole](nikole.md)
 
 link test
 
-<img width="1635" alt="Screenshot 2025-01-27 at 10 59 10 PM" src="https://github.com/user-attachments/assets/103a49ff-95ed-407f-b580-3b27d779310b" />
+![Screenshot 2025-01-27 at 10 59 10 PM](/wiki/images/a317962609dc804cdcd328256fb63764.png | width=1635)
