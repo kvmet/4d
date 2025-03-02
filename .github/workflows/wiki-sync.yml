@@ -70,7 +70,7 @@ jobs:
                 done <<< "$content"
                 
                 # Convert wiki-style links to markdown style
-                content=$(echo "$content" | perl -pe 's/\[\[(.*?)\]\]/[${\(my $x=$1)=~s/-/ /gr}]($1.md)/g')
+                content=$(echo "$content" | perl -pe 's/\[\[(.*?)\]\]/[$1]($1.md)/g')
                 
                 # Check if file starts with frontmatter
                 if [[ $(head -n 1 "$file") == "---" ]]; then
@@ -107,4 +107,4 @@ jobs:
             git push
           fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }
