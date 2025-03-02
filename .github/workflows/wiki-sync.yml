@@ -3,6 +3,9 @@ name: Wiki Sync to Pages
 on:
   gollum:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   sync-wiki:
@@ -23,28 +26,64 @@ jobs:
           path: temp-wiki
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Sync wiki content
+      - name: Install curl
+        run: sudo apt-get install -y curl
+
+      - name: Sync wiki content and images
         run: |
           mkdir -p wiki
+          mkdir -p wiki/images
 
+          # Process markdown files
           for file in temp-wiki/*.md; do
             if [ -f "$file" ]; then
               filename=$(basename "$file")
               if [[ "$filename" != "_"* ]]; then
                 content=$(cat "$file")
                 
+                # Process GitHub attachment image tags
+                while IFS= read -r line; do
+                  if [[ $line =~ \<img.*src=\"(https://github\.com/[^\"]+)\".*\> ]]; then
+                    img_url="${BASH_REMATCH[1]}"
+                    img_filename=$(echo "$img_url" | md5sum | cut -d' ' -f1).png  # Generate unique filename
+                    
+                    # Download the image
+                    echo "Downloading image from $img_url"
+                    curl -L -o "wiki/images/$img_filename" "$img_url"
+                    
+                    # Replace the entire <img> tag with markdown image syntax
+                    if [[ $line =~ alt=\"([^\"]+)\" ]]; then
+                      alt_text="${BASH_REMATCH[1]}"
+                    else
+                      alt_text="image"
+                    fi
+                    
+                    if [[ $line =~ width=\"([^\"]+)\" ]]; then
+                      width="${BASH_REMATCH[1]}"
+                      new_img_tag="![${alt_text}](/wiki/images/${img_filename} | width=${width})"
+                    else
+                      new_img_tag="![${alt_text}](/wiki/images/${img_filename})"
+                    fi
+                    
+                    content="${content//$line/$new_img_tag}"
+                  fi
+                done <<< "$content"
+                
+                # Convert wiki-style links to markdown style
+                content=$(echo "$content" | perl -pe 's/\[\[(.*?)\]\]/[${\(my $x=$1)=~s/-/ /gr}]($1.md)/g')
+                
                 # Check if file starts with frontmatter
                 if [[ $(head -n 1 "$file") == "---" ]]; then
-                  # Has frontmatter, copy as-is
-                  cp "$file" "wiki/$(basename $file)"
+                  # Has frontmatter, but still process content for links
+                  echo "$content" > "wiki/$(basename $file)"
                 else
                   # Look for first H1 heading
                   if h1_title=$(echo "$content" | grep -m 1 "^# "); then
                     title=$(echo "$h1_title" | sed 's/^# //')
                     echo -e "---\ntitle: ${title}\nlayout: default\n---\n\n$content" > "wiki/$(basename $file)"
                   else
-                    # No H1, just copy the file as-is
-                    cp "$file" "wiki/$(basename $file)"
+                    # No H1, just process content
+                    echo "$content" > "wiki/$(basename $file)"
                   fi
                 fi
               fi
@@ -53,18 +92,18 @@ jobs:
 
           # Clean up
           rm -rf temp-wiki
-
+          
           # Configure git with token-based authentication
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
-
+          
           # Commit and push changes if any
           git add wiki
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Sync wiki content"
+            git commit -m "Sync wiki content and images"
             git push
           fi
         env:
