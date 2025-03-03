@@ -50,13 +50,12 @@ jobs:
                     # Download the image with verbose output and proper redirect handling
                     echo "Downloading image from $img_url"
                     curl -L \
-                         -H "Authorization: Bearer ${{ github.token }}" \
                          -H "Accept: image/*" \
-                         -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" \
-                         -v \
-                         -o "wiki/images/$img_filename" "$img_url"
-          
-                    # Add file info for debugging
+                         -H "User-Agent: Mozilla/5.0" \
+                         --verbose \
+                         -o "wiki/images/$img_filename" "$img_url" 2>&1 | tee curl_output.log
+
+                    echo "Curl exit code: $?"
                     echo "Downloaded file info:"
                     ls -l "wiki/images/$img_filename"
                     file "wiki/images/$img_filename"
