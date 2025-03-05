@@ -67,12 +67,7 @@ jobs:
                       alt_text="image"
                     fi
                     
-                    if [[ $line =~ width=\"([^\"]+)\" ]]; then
-                      width="${BASH_REMATCH[1]}"
-                      new_img_tag="![${alt_text}](/wiki/images/${img_filename} | width=${width})"
-                    else
-                      new_img_tag="![${alt_text}](/wiki/images/${img_filename})"
-                    fi
+                    new_img_tag="![${alt_text}](/wiki/images/${img_filename})"
                     
                     content="${content//$line/$new_img_tag}"
                   fi
