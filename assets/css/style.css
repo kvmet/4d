@@ -106,3 +106,34 @@ img {
   height: auto;
   margin: 1.5rem 0;
 }
+
+.swatch {
+    --swatch-size: 50px;
+    --swatch-color: #808080;
+    
+    display: inline-block;
+    width: var(--swatch-size);
+    height: var(--swatch-size);
+    background-color: var(--swatch-color);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 4px;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s;  /* Add this */
+}
+
+.swatch:hover {
+    transform: scale(1.1);  /* Add this */
+}
+
+.swatch::after {
+    content: var(--swatch-label, '');
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
