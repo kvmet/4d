@@ -95,28 +95,10 @@ jobs:
                 done <<< "$content"
                 
                 # Convert wiki-style links to markdown style without extension
-                while IFS= read -r line; do
-                  # Check for piped wiki links [[page|text]]
-                  if [[ $line =~ \[\[(.*?)\|(.*?)\]\] ]]; then
-                    link="${BASH_REMATCH[1]}"           # First capture group (page)
-                    display="${BASH_REMATCH[2]}"        # Second capture group (text)
-                    # Convert spaces to hyphens in link
-                    link_with_hyphens="${link// /-}"
-                    # Build markdown link
-                    new_link="[${display}](${link_with_hyphens})"
-                    # Replace in content
-                    content="${content//${BASH_REMATCH[0]}/$new_link}"
-                  # Check for simple wiki links [[page]]
-                  elif [[ $line =~ \[\[(.*?)\]\] ]]; then
-                    link="${BASH_REMATCH[1]}"
-                    # Convert spaces to hyphens in link
-                    link_with_hyphens="${link// /-}"
-                    # Build markdown link
-                    new_link="[${link}](${link_with_hyphens})"
-                    # Replace in content
-                    content="${content//${BASH_REMATCH[0]}/$new_link}"
-                  fi
-                done <<< "$content"
+                content=$(echo "$content" | perl -pe 's/\[\[([^\]|]+)\|([^\]]+)\]\]/[\2](\1)/g')  # Format: [[Target|Display]]
+                content=$(echo "$content" | perl -pe 's/\[\[([^\]]+)\]\]/[\1](\1)/g')  # Format: [[Target]]
+                content=$(echo "$content" | perl -pe 's/\](\w+)\.md\)/](\1)/g')  # Remove .md extension from links
+                content=$(echo "$content" | perl -pe 's/ /-/g' -pe 's/\](\w+)\)/](\1)/g')  # Replace spaces with hyphens in target
                 
                 # Check if file starts with frontmatter
                 if [[ $(head -n 1 "$file") == "---" ]]; then
