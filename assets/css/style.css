@@ -18,6 +18,33 @@ body {
   padding: 2rem;
 }
 
+.header {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    gap: 2rem;
+}
+
+.logo {
+    height: 40px;
+    width: 40px;
+}
+
+.nav {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav a {
+    color: var(--accent-primary);
+    text-decoration: none;
+    font-size: 1.1rem;
+}
+
+.nav a:hover {
+    color: var(--accent-secondary);
+}
+
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
   color: var(--accent-primary);
