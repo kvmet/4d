@@ -95,13 +95,28 @@ jobs:
                 done <<< "$content"
                 
                 # Convert wiki-style links to markdown style without extension
-                content=$(echo "$content" | \
-                  # First handle piped links ([[link|text]] format)
-                  sed -E 's/\[\[(.*?)\|(.*?)\]\]/\[\2\]\(\1\)/g' | \
-                  # Then handle simple links ([[link]] format)
-                  sed -E 's/\[\[(.*?)\]\]/\[\1\]\(\1\)/g' | \
-                  # Finally convert spaces to hyphens in all link targets
-                  sed -E 's/\[([^\]]*)\]\(([^)]*)\)/\[\1\]\('"$(echo '\2' | sed 's/ /-/g')"'\)/g')
+                while IFS= read -r line; do
+                  # Check for piped wiki links [[page|text]]
+                  if [[ $line =~ \[\[(.*?)\|(.*?)\]\] ]]; then
+                    link="${BASH_REMATCH[1]}"           # First capture group (page)
+                    display="${BASH_REMATCH[2]}"        # Second capture group (text)
+                    # Convert spaces to hyphens in link
+                    link_with_hyphens="${link// /-}"
+                    # Build markdown link
+                    new_link="[${display}](${link_with_hyphens})"
+                    # Replace in content
+                    content="${content//${BASH_REMATCH[0]}/$new_link}"
+                  # Check for simple wiki links [[page]]
+                  elif [[ $line =~ \[\[(.*?)\]\] ]]; then
+                    link="${BASH_REMATCH[1]}"
+                    # Convert spaces to hyphens in link
+                    link_with_hyphens="${link// /-}"
+                    # Build markdown link
+                    new_link="[${link}](${link_with_hyphens})"
+                    # Replace in content
+                    content="${content//${BASH_REMATCH[0]}/$new_link}"
+                  fi
+                done <<< "$content"
                 
                 # Check if file starts with frontmatter
                 if [[ $(head -n 1 "$file") == "---" ]]; then
