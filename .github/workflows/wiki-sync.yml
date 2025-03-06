@@ -18,7 +18,13 @@ jobs:
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-        
+          
+      - name: Checkout gh-pages branch
+        run: |
+          git fetch
+          git checkout gh-pages || git checkout -b gh-pages
+          git reset --hard origin/main
+
       - name: Checkout wiki
         uses: actions/checkout@v3
         with:
@@ -79,10 +85,10 @@ jobs:
                 done <<< "$content"
                 
                 # Convert wiki-style links to markdown style without extension
-                # This will convert spaces to hyphens in the link portion while keeping the display text as is
+                # This handles both [[Page Name]] and [[Page Name|Display Text]] formats
                 content=$(echo "$content" | perl -pe '
-                  s/\[\[(.*?)\|(.*?)\]\]/[$2]('"$(echo '\1' | sed 's/ /-/g')"')/g;  # Handle [[link|text]] format
-                  s/\[\[(.*?)\]\]/[$1]('"$(echo '\1' | sed 's/ /-/g')"')/g;         # Handle [[link]] format
+                  s/\[\[(.*?)\|(.*?)\]\]/[$2]('"$(echo '\1' | sed 's/ /-/g')"')/g;  # Handle [[link|text]] format first
+                  s/\[\[(.*?)\]\]/[$1]('"$(echo '\1' | sed 's/ /-/g')"')/g;         # Then handle [[link]] format
                 ')
                 
                 # Check if file starts with frontmatter
@@ -111,13 +117,13 @@ jobs:
           git config user.email "<>"
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
           
-          # Commit and push changes if any
+          # Commit and push changes to gh-pages branch
           git add wiki
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
             git commit -m "Sync wiki content and images"
-            git push
+            git push origin gh-pages --force
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
