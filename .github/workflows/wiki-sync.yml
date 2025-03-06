@@ -96,11 +96,10 @@ jobs:
                 
                 # Convert wiki-style links to markdown style without extension
                 content=$(echo "$content" | perl -pe '
-                  s/\[\[([^\]|]+)\|([^\]]+)\]\]/[\2](\1)/g;      # Format: [[Target|Display]]
-                  s/\[\[([^\]]+)\]\]/[\1](\1)/g;                 # Format: [[Target]]
-                  s/\](\w+)\.md\)/](\1)/g;                       # Remove .md extension from links
-                  s/ /-/g;                                        # Replace spaces with hyphens in target
-                  s/\]([^\)]+)\)/](\L\1)/g;                      # Convert target to lowercase
+                    s/\[\[([^\]|]+)\|([^\]]+)\]\]/[\2]($1)/g;      # Format: [[Target|Display]]
+                    s/\[\[([^\]]+)\]\]/[\1]($1)/g;                 # Format: [[Target]]
+                    s/\]([^\)]+)\.md\)/]($1)/g;                    # Remove .md extension from links
+                    s/\]\(([^\)]+) ([^\)]+)\)/]($1-$2)/g;          # Replace spaces with hyphens in target only
                 ')
                 
                 # Check if file starts with frontmatter
