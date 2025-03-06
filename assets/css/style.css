@@ -2,16 +2,9 @@
 :root {
   --bg-color: #fffefd;
   --text-color: #12222e;
-  --accent-primary: #6a3937;
-  --accent-secondary: #6a3937;
+  --accent-primary: #BE7C4D;
+  --accent-secondary: #691FFF;
   --interface-gray: #606c66;
-  /*
-  --bg-color: #faf8f3;
-  --text-color: #2d3436;
-  --accent-primary: #e17055;
-  --accent-secondary: #0984e3;
-  --interface-gray: #7E7F9A;
-  */
 }
 
 /* Base styles */
