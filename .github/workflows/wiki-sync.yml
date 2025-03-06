@@ -24,9 +24,12 @@ jobs:
           git fetch
           git checkout gh-pages || git checkout -b gh-pages
           git reset --hard origin/main
-          # Remove all files except wiki content
-          git rm -rf .
-          git clean -fdx
+          rm -rf wiki
+          rm -rf .github
+          rm .gitignore
+          rm CNAME
+          rm LICENSE
+          rm README.md
 
       - name: Checkout wiki
         uses: actions/checkout@v3
