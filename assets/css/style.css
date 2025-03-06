@@ -19,11 +19,11 @@ body {
 }
 
 .header {
- display: flex;
- align-items: center;
- padding: 0 1rem;
- gap: 2rem;
- border-bottom: solid var(--interface-gray);
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  gap: 2rem;
+  border-bottom: solid var(--interface-gray);
 }
 
 .logo {
@@ -38,13 +38,11 @@ body {
 
 .nav a {
   color: var(--accent-primary);
-  text-decoration: none;
   font-size: 1.1rem;
 }
 
 .nav a:hover {
   color: var(--accent-secondary);
-  text-decoration: none;
 }
 
 /* Typography */
@@ -66,10 +64,6 @@ p {
 a {
   color: var(--accent-secondary);
   text-decoration: none;
-}
-
-a:hover {
-  border-bottom: 1px solid var(--accent-secondary);
 }
 
 /* Lists */
@@ -137,32 +131,32 @@ img {
 }
 
 .swatch {
-    --swatch-size: 50px;
-    --swatch-color: #808080;
-    
-    display: inline-block;
-    width: var(--swatch-size);
-    height: var(--swatch-size);
-    background-color: var(--swatch-color);
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin: 4px;
-    cursor: pointer;
-    position: relative;
-    transition: transform 0.2s;  /* Add this */
+  --swatch-size: 50px;
+  --swatch-color: #808080;
+  
+  display: inline-block;
+  width: var(--swatch-size);
+  height: var(--swatch-size);
+  background-color: var(--swatch-color);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin: 4px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s;  /* Add this */
 }
 
 .swatch:hover {
-    transform: scale(1.1);  /* Add this */
+  transform: scale(1.1);  /* Add this */
 }
 
 .swatch::after {
-    content: var(--swatch-label, '');
-    position: absolute;
-    bottom: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 12px;
-    white-space: nowrap;
+  content: var(--swatch-label, '');
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  white-space: nowrap;
 }
 
