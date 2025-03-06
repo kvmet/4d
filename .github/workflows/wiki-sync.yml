@@ -31,6 +31,8 @@ jobs:
 
       - name: Sync wiki content and images
         run: |
+          # Clear out existing wiki folder
+          rm -rf wiki
           mkdir -p wiki
           mkdir -p wiki/images
 
@@ -77,7 +79,11 @@ jobs:
                 done <<< "$content"
                 
                 # Convert wiki-style links to markdown style without extension
-                content=$(echo "$content" | perl -pe 's/\[\[(.*?)\]\]/[$1]($1)/g')
+                # This will convert spaces to hyphens in the link portion while keeping the display text as is
+                content=$(echo "$content" | perl -pe '
+                  s/\[\[(.*?)\|(.*?)\]\]/[$2]('"$(echo '\1' | sed 's/ /-/g')"')/g;  # Handle [[link|text]] format
+                  s/\[\[(.*?)\]\]/[$1]('"$(echo '\1' | sed 's/ /-/g')"')/g;         # Handle [[link]] format
+                ')
                 
                 # Check if file starts with frontmatter
                 if [[ $(head -n 1 "$file") == "---" ]]; then
