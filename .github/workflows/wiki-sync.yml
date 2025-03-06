@@ -29,6 +29,11 @@ jobs:
           rm -f LICENSE
           rm -f .gitignore
           rm -f README.md
+          # Commit the removals
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          git add -A
+          git commit -m "Remove files not needed in gh-pages"
 
       - name: Checkout wiki
         uses: actions/checkout@v3
