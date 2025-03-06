@@ -97,8 +97,8 @@ jobs:
                 # Convert wiki-style links to markdown style without extension
                 # This handles both [[Page Name]] and [[Page Name|Display Text]] formats
                 content=$(echo "$content" | perl -pe '
-                  s/\[\[(.*?)\|(.*?)\]\]/[$2]('"$(echo '\1' | sed 's/ /-/g')"')/g;  # Handle [[link|text]] format first
-                  s/\[\[(.*?)\]\]/[$1]('"$(echo '\1' | sed 's/ /-/g')"')/g;         # Then handle [[link]] format
+                  s/\[\[(.*?)\|(.*?)\]\]/[$2](${\(my $s=$1)=~s| |-|g;$s})/g;  # Handle [[link|text]] format first
+                  s/\[\[(.*?)\]\]/[$1](${\(my $s=$1)=~s| |-|g;$s})/g;         # Then handle [[link]] format
                 ')
                 
                 # Check if file starts with frontmatter
