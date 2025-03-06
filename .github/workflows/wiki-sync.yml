@@ -99,7 +99,7 @@ jobs:
                     s/\[\[([^\]|]+)\|([^\]]+)\]\]/[\1]($2)/g;      # Format: [[Display|Target]]
                     s/\[\[([^\]]+)\]\]/[\1]($1)/g;                 # Format: [[Target]]
                     s/\]([^\)]+)\.md\)/]($1)/g;                    # Remove .md extension from links
-                    s/\]\(([^\)]+) ([^\)]+)\)/]($1-$2)/g;          # Replace spaces with hyphens in target only
+                    s/\]\(([^\)]+?)\s+([^\)]+?)\)/]($1-$2)/g while m/\]\([^\)]*\s+[^\)]*\)/;  # Replace all spaces with hyphens in target
                 ')
                 
                 # Check if file starts with frontmatter
